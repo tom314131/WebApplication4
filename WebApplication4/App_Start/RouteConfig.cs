@@ -15,8 +15,26 @@ namespace WebApplication4
 
             routes.MapRoute(
                 name: "Default",
-                url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+                url: "{controller}/{action}",
+                defaults: new { controller = "Displayer", action = "Index", info = UrlParameter.Optional }
+            );
+
+            routes.MapRoute(
+                name: "Displayer",
+                url: "display/{first}/{second}/{rate}",
+                defaults: new { controller = "Displayer", action = "Display", rate = UrlParameter.Optional }
+            );
+
+            //routes.MapRoute(
+            //    name: "DisplayContinuous",
+            //    url: "display/{first}/{second}/{rate}",
+            //    defaults: new { controller = "Displayer", action = "DisplayContinuous" }
+            //);
+
+            routes.MapRoute(
+                name: "Saver",
+                url: "save/{ip}/{port}/{rate}/{time}/{name}",
+                defaults: new { controller = "Save", action = "save" }
             );
         }
     }
