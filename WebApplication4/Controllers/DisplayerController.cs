@@ -21,7 +21,7 @@ namespace WebApplication4.Controllers
             return "index";
         }
 
-        public ActionResult Display(string first, int second, int rate = 0)
+        public ActionResult Display(string first ="127.0.0.1", int second=5400, int rate = 0)
         {
             IPAddress address;
             if (IPAddress.TryParse(first, out address))
