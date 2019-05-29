@@ -69,15 +69,31 @@
 
         var ctx = canvas.getContext("2d");
 
+
         var points = [new Point(300, 250),
             new Point(315, 300),
             new Point(370, 350),
             new Point(390,390)]
 
         ctx.strokeStyle = "red";
-        ctx.moveTo(0,0);
+        ctx.moveTo(0, 76);
 
-        ctx.quadraticCurveTo(0, 0, 10, 10);
+        // center dot - 150.7,76
+        // edge 300 - height and width
+        // so we add to each dot 150.7 to x and 76 to y
+
+
+
+
+        ctx.quadraticCurveTo(0, 76, 300, 76);
+        ctx.stroke();
+        ctx.quadraticCurveTo(300, 76, 150.7, 150);
+        ctx.stroke();
+        ctx.quadraticCurveTo(150.7, 150, 0, 76);
+        ctx.stroke();
+        ctx.quadraticCurveTo(0, 76, 150.7, 0);
+        ctx.stroke();
+        ctx.quadraticCurveTo(150.7, 0, 300, 76);
         ctx.stroke();
 
         $("#currentDot").css({ top: "50%", left: "50%" });

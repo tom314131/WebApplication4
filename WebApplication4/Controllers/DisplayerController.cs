@@ -38,7 +38,7 @@ namespace WebApplication4.Controllers
         {
             if (client == null)
             {
-                //                client = new SimulatorClient(ip, port);
+                //client = new SimulatorClient(ip, port);
             }
 
             ViewBag.rate = rate;
