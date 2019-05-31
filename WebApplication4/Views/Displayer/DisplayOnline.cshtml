@@ -20,110 +20,104 @@
             position: absolute;
         }
 
-        /*body {
-            background-image: url("../../Map/map.png");
-            background-size: cover;
-            background-repeat: no-repeat;
-        }*/
-        canvas {
+        #draws {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url("../../Map/map.png");
+            background-image: url("/Map/map.png");
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center center;
         }
     </style>
 </head>
+
 <body>
-    <canvas id="myCanvas"></canvas>
-    <div>
-        <h1 id="lon" />
-        <h1 id="lat" />
-
-    </div>
-
-    <div id="currentDot" />
-
+    <canvas id="draws"></canvas>
+    <h1 id="lon"></h1>
+    <h1 id="lat"></h1>
+    <div id="currentDot"></div>
     <script>
 
         class Point {
-            constructor(x, y) {
-                this._x = x;
-                this._y = y;
+            constructor() {
+                this.x = 0;
+                this.y = 0;
             }
-            get x() {
-                return this._x;
+            set X(newX) {
+                this.x = newX;
             }
-            get y() {
-                return this._y;
+            set Y(newY) {
+                this.y = newY;
+            }
+            get X() {
+                return this.x;
+            }
+            get Y() {
+                return this.y;
             }
         }
 
-        var runInfinitly = @ViewBag.rate == 0 ? false : true;
+        var onlineController = (function () {
+            var notFirstTime = false;
+            var lastBeforeCurrentPoint = new Point();
+            var currentPoint = new Point();
+            var params = { query: "/position/longitude-deg,/position/latitude-deg" };
+            var canvas = document.getElementById("draws");
+            var ctx = canvas.getContext("2d");
+            var counter = 0;
+            ctx.strokeStyle = "red";
 
-        var canvas = document.getElementById("myCanvas");
+            function GetNewCurrentLocation() {
+                $.post("@Url.Action("QueryData")", params).done(function (locationString) {
+                    var location = locationString.split(',');
+                    $("#lon").html(parseFloat(location[0]));
+                    $("#lat").html(parseFloat(location[1]));
+                    lastBeforeCurrentPoint.X = currentPoint.X;
+                    lastBeforeCurrentPoint.Y = currentPoint.Y;
+                    currentPoint.X = parseFloat(location[0]);
+                    currentPoint.Y = parseFloat(location[1]);
+                });
+            }
 
-        var ctx = canvas.getContext("2d");
+            function DrawFromLastToCurrentLine() {
+                ctx.moveTo(lastBeforeCurrentPoint.X, lastBeforeCurrentPoint.Y);
+                ctx.quadraticCurveTo(lastBeforeCurrentPoint.X, lastBeforeCurrentPoint.Y, currentPoint.X, currentPoint.Y);
+                ctx.stroke();
+            }
 
+            function UpdateCurrentLocation() {
+                var fromTop = (currentPoint.X + 90) / 180 * 100;
+                var fromRight = (currentPoint.Y + 180) / 360 * 100;
+                $("#currentDot").css({ top: fromTop.valueOf().toString() + "%", right: fromRight.valueOf().toString() + "%" });
+            }
 
-        var points = [new Point(300, 250),
-            new Point(315, 300),
-            new Point(370, 350),
-            new Point(390,390)]
+            function UpdateCanvas() {
+                $("#lon").text(counter);
+                counter++;
+                GetNewCurrentLocation();
+                if (notFirstTime) {
+                    DrawFromLastToCurrentLine();
+                } else {
+                    notFirstTime = true;
+                }
+                UpdateCurrentLocation();
+            }
 
-        ctx.strokeStyle = "red";
-        ctx.moveTo(0, 76);
-
-        // center dot - 150.7,76
-        // edge 300 - height and width
-        // so we add to each dot 150.7 to x and 76 to y
-
-
-
-
-        ctx.quadraticCurveTo(0, 76, 300, 76);
-        ctx.stroke();
-        ctx.quadraticCurveTo(300, 76, 150.7, 150);
-        ctx.stroke();
-        ctx.quadraticCurveTo(150.7, 150, 0, 76);
-        ctx.stroke();
-        ctx.quadraticCurveTo(0, 76, 150.7, 0);
-        ctx.stroke();
-        ctx.quadraticCurveTo(150.7, 0, 300, 76);
-        ctx.stroke();
-
-        $("#currentDot").css({ top: "50%", left: "50%" });
-        //document.getElementById("currentDot").style.right = "50%";
-        //document.getElementById("currentDot").style.top = "50%";
-
-
-        //var xc = (points[1]._x + points[2]._x) / 2;
-        //xtx.quadraticCurveTo(points[1]._x, points[2]._y, xc, yc);
-        //for (i = 0; i < points.length; i++) {
-        //    var xc = (points[i]._x + points[i + 1]._x) / 2;
-        //    var yc = (points[i]._y + points[i + 1]._y) / 2;
-        //    ctx.quadraticCurveTo(points[i]._x, points[i]._y, xc, yc);
-        //}
-        //ctx.quadraticCurveTo(points[i]._x, points[i]._y, points[i + 1]._x, points[i + 1]._y);
-
-
-        @*do {
-            var params = {
-                query: "/position/longitude-deg,/position/latitude-deg",
+            return {
+                UpdateCanvas: UpdateCanvas
             };
+        })();
 
-            $.post("@Url.Action("QueryData")", params).done(function (xml) {
-                var xmlDoc = $.parseXML(xml);
-                $xml = $(xmlDoc);
-                $("#lon").text($xml.find("lon")).text();
-                $("#lat").text($xml.find("lat")).text();
-            });
+        if (@ViewBag.rate != 0) {
+            var intervalTime = 1000 / @ViewBag.rate;
+            setInterval(onlineController.UpdateCanvas, intervalTime);
 
-        } while (runInfinitly);*@
+        }
+
+        onlineController.UpdateCanvas();
 
     </script>
 </body>

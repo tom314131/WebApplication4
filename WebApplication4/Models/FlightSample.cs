@@ -26,13 +26,19 @@ namespace WebApplication4.Models
             writer.WriteEndElement();
         }
 
+        public class FlightSample
+        {
+            public Location location { get; set; }
+            public float altitude { get; set; }
+            public float direction { get; set; }
+            public float velocity { get; set; }
+            public FlightSample(double longtitude, double latitude)
+            {
+                this.location = new Location(longtitude, latitude);
+            }
+        }
+
     }
 
-    public class FilghtSample
-    {
-        public Location location { get; set; }
-        public float altitude { get; set; }
-        public float direction { get; set; }
-        public float velocity { get; set; }
-    }
+  
 }

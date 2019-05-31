@@ -45,18 +45,22 @@ namespace WebApplication4.Controllers
             return View("DisplayOnline");
         }
 
-        ActionResult DisplaySavedMap(string name, int rate)
+        ActionResult DisplaySavedMap(string fileName, int rate)
         {
-            ViewBag.rate = rate;
-            return View();
+            InfoModel.Instance.ReadData(fileName);
+            Session["rate"] = rate;
+            Session["SavedLocations"] = InfoModel.Instance.GetNumOfLocations();
+            return View("DisplaySavedLocations");
         }
 
         [HttpPost]
         public string QueryData(string query)
         {
-            double[] data = client.GetData(query.Split(','));
+            double[] point = GeneratorForTests.Instance.newPoint;
+            return String.Format("{0},{1}", point[0], point[1]);
+            //double[] data = client.GetData(query.Split(','));
 
-            return ToXml(new Location(data[0], data[1]));
+            //return ToXml(new Location(data[0], data[1]));
         }
 
         string ToXml(Location location)
@@ -72,6 +76,13 @@ namespace WebApplication4.Controllers
             writer.Flush();
 
             return sb.ToString();
+        }
+
+        public string ShowLocationOnMap()
+        {
+            string location = InfoModel.Instance.GetLocation();
+            string[] info = location.Split(',');
+            return ToXml(new Location(Convert.ToDouble(info[0]), Convert.ToDouble(info[1])));
         }
     }
 }

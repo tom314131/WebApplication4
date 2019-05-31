@@ -1,0 +1,50 @@
+﻿
+@{
+    ViewBag.Title = "DisplaySavedLocations";
+}
+
+<h2>DisplaySavedLocations</h2>
+
+<table>
+    <tr>
+        <td>Id:  </td>
+        <td><p type="text" id="lon" size="5"></p></td>
+    </tr>
+    <tr>
+        <td>Name:  </td>
+        <td><p type="text" id="lat" size="5"></p></td>
+    </tr>
+</table>
+
+    <script>
+    var locationsNum = @Session["SavedLocations"]
+    var rate = @Session["rate"]
+    var hertz = 1 / rate
+    var IntervalTime = hertz * 1000
+
+    function GetSavedLocations() {
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("ShowLocationOnMap")",
+            async: false,
+            success: function (xml) {
+                var xmlDoc = $.parseXML(xml),
+                    $xml = $(xmlDoc),
+                    lon = $xml.find("lon").text();
+                    lat = $xml.find("lat").text();
+                $("#lon").text(lon);
+                $("#lat").text(lat);
+                locationsNum = locationsNum - 1
+                if (locationsNum == 0) {
+                    setTimeout(function () { alert("Finish Senario, ther are no more location to show!") }, IntervalTime)
+                    clearInterval(myVar)
+                }
+            }
+        });
+    }
+
+    myVar = setInterval(GetSavedLocations, IntervalTime)
+    GetSavedLocations()
+
+    </script>
+

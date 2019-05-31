@@ -102,14 +102,19 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Web.config" />
     <Content Include="Views\Displayer\DisplayOnline.cshtml" />
+    <Content Include="Views\save\Save.cshtml" />
+    <Content Include="Views\Displayer\DisplaySavedLocations.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\DisplayerController.cs" />
+    <Compile Include="Controllers\saveController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\FilghtSample.cs" />
+    <Compile Include="Models\FlightSample.cs" />
+    <Compile Include="Models\GeneratorForTests.cs" />
+    <Compile Include="Models\InfoModel.cs" />
     <Compile Include="Models\SimulatorClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

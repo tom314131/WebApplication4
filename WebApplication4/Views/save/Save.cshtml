@@ -1,0 +1,60 @@
+﻿
+@{
+    ViewBag.Title = "Save";
+}
+
+<h2>Save</h2>
+
+<div>
+    <h2>Locations</h2>
+    <table>
+        <tr>
+            <td>Longtitude:  </td>
+            <td><p type="text" id="lon" size="5"></p></td>
+        </tr>
+        <tr>
+            <td>Latitude:  </td>
+            <td><p type="text" id="lat" size="5"></p></td>
+        </tr>
+        <tr>
+            <td>Altitude:  </td>
+            <td><p type="text" id="alt" size="5"></p></td>
+        </tr>
+        <tr>
+            <td>Direction:  </td>
+            <td><p type="text" id="dir" size="5"></p></td>
+        </tr>
+        <tr>
+            <td>Velocity:  </td>
+            <td><p type="text" id="vel" size="5"></p></td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    var toCreateFile = true
+    var inserted = 0
+    var hertz = 1 /  @Session["rate"]
+    var IntervalTime =  hertz * 1000 
+    var iterations = @Session["iterations"]
+    function GetLocation() {
+        var params = '@ViewBag.fileName'
+        $.ajax({
+            type: "POST",
+            data: { 'fileName': params, 'toCreateFile': toCreateFile },
+            url: "@Url.Action("GetLocation")",
+            async: false,
+            success: function () {
+                toCreateFile = false
+                inserted = inserted + 1
+                if (inserted == iterations) {
+                    clearInterval(myVar);
+                }
+            }
+        });
+    }
+    myVar = setInterval(GetLocation, IntervalTime)
+    GetLocation();
+</script>
+
+
